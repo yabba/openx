@@ -1,0 +1,206 @@
+{*<!--
++---------------------------------------------------------------------------+
+| OpenX v${RELEASE_MAJOR_MINOR}                                             |
+| ======${RELEASE_MAJOR_MINOR_DOUBLE_UNDERLINE}                             |
+|                                                                           |
+| Copyright (c) 2003-2009 OpenX Limited                                     |
+| For contact details, see: http://www.openx.org/                           |
+|                                                                           |
+| This program is free software; you can redistribute it and/or modify      |
+| it under the terms of the GNU General Public License as published by      |
+| the Free Software Foundation; either version 2 of the License, or         |
+| (at your option) any later version.                                       |
+|                                                                           |
+| This program is distributed in the hope that it will be useful,           |
+| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             |
+| GNU General Public License for more details.                              |
+|                                                                           |
+| You should have received a copy of the GNU General Public License         |
+| along with this program; if not, write to the Free Software               |
+| Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA |
++---------------------------------------------------------------------------+
+$Id$
+
+-->*}
+
+{if $_e.type == 'header'}
+{* open section *}
+  <table class="section" border='0' width='100%' cellpadding='0' cellspacing='0'>
+  <tr><td height='25' colspan='3'>{if $_e.icon}<img src='{$assetPath}/images/{$_e.icon}' align='absmiddle'>&nbsp;{/if}{if $_e.header}<b>{$_e.header}</b>{/if}</td></tr>
+  <tr style="height:1px;"><td width='30'><img src='{$assetPath}/images/break.gif' alt='' style="height:1px; width:30px;"></td>
+    <td width='170'><img src='{$assetPath}/images/break.gif' alt='' style="height:1px; width:170px;"></td>
+    <td width='100%'><img src='{$assetPath}/images/break.gif' alt='' style="height:1px;" width='100%'></td>
+  </tr>
+  <tr><td height='10' colspan='3'>&nbsp;</td></tr>
+      {if $_e.errors}
+      {* section errors *}
+      <tr><td>&nbsp;</td><td height='10' colspan='2'>
+      <table cellpadding='0' cellspacing='0' border='0'><tr><td>
+      <img src='{$assetPath}/images/error.gif' align='absmiddle'>&nbsp;
+      {foreach item=_eErr from=$_e.errors}
+          <font color='#AA0000'><b>{$_eErr}</b></font><br />
+      {/foreach}
+      </td></tr></table></td></tr><tr><td height='10' colspan='3'>&nbsp;</td></tr>
+      <tr><td><img src='{$assetPath}/images/spacer.gif' style="height:1px;" width='100%'></td>
+      <td colspan='2'><img src='{$assetPath}/images/break-l.gif' style="height:1px; width:170px;" vspace='6'></td></tr>
+      {/if}
+  
+      {* display section content *}
+      {$_e.content}
+      
+      {* close section *}    
+      {*<tr>
+          <td height='10' colspan='3'>&nbsp;</td>
+      </tr>*}
+  </table>
+{/if}
+
+{if $_e.type == 'controls'}
+    {* open controls *}
+    <div class="controls">
+      {if $form.hasRequiredFields and not $form.frozen}
+        <span style="margin-left: 7px; float: right;">
+            <span style="font-size:80%; color: red">*</span> <span style="font-size:80%; color:#7f7f7f;">{t str=RequiredFieldLegend}</span>
+        </span>
+      {/if}
+    
+      {* display form controls *}
+      {$_e.content}
+      {* close form controls *}
+    </div>
+{/if}
+
+{*break*}
+{if $_e.type != 'header' && $_e.type != 'controls' && $_e.type != 'hidden' && $_e.type != 'script' && $_e.type != 'plugin-script' && $_e.break}
+    <tr class="spacer"><td style="height:1px;" colspan='3'>&nbsp;</td></tr>
+{/if}
+
+
+{if $_e.type == "group"}
+    {if !$_e.parent}
+    <tr>
+        <td width='30'>&nbsp;</td>
+        {if $_e.label}
+            <td width='170' valign="top" style="padding-top: 5px">{$_e.label} {if $_e.required}<font color="red">*</font>{/if}</td>
+        {/if}
+        <td {if $_e.label}width='100%'{else}colspan='2'{/if}>
+    {/if}
+      
+    {cycle name=gsep advance=false values=$_e.separator reset=true print=false}
+    {foreach key=gkey item=groupItem from=$_e.elements}
+        {if $groupItem.type == "group"}
+            {oa_form_element elem=$groupItem parent=$_e}{/oa_form_element}
+        {else}
+            {if $groupItem.decorators}
+               {$groupItem.decorators.prepend}
+            {/if}
+        
+            {if $groupItem.type == 'custom'}
+                {include file=$oaTemplateDir|cat:'form/custom-'|cat:$groupItem.templateId|cat:'.html' elem=$groupItem}
+            {else}
+              {if $groupItem.labelPlacement == "after"}
+                 {include file=$oaTemplateDir|cat:'form/element-raw.html' elem=$groupItem parent=$_e} {$groupItem.label}{if $groupItem.required}<font color="red">*</font>{/if}
+              {else}
+                  {$groupItem.label}{if $groupItem.required && $groupItem.label}<font color="red">*</font>{/if} {include file=$oaTemplateDir|cat:'form/element-raw.html' elem=$groupItem parent=$_e}{if $groupItem.required && !$groupItem.label}<font color="red">*</font>{/if}
+              {/if}
+            {/if}
+            {if $groupItem.decorators}
+                {$groupItem.decorators.append}
+            {/if}
+        {/if}
+        {if $_e.separator}{cycle name=gsep values=$_e.separator}
+        {/if}
+    {/foreach}
+    
+    {if !$_e.parent}
+        {if $_e.error}<br><label class="error">{$_e.error}</label>{/if}    
+        </td>
+    </tr>
+    {/if}
+    
+{/if}
+
+{if $_e.type == 'text' || $_e.type == 'password' || $_e.type == 'textarea' || $_e.type == 'select' || !$_e.type}
+    <tr>
+        <td width='30'>&nbsp;</td><td width='170'><label for="{$_e.id|default:$_e.name|escape}">{$_e.label} {if $_e.required}<font color="red">*</font>{/if}</label></td>
+        <td width='100%'>
+           {include file=$oaTemplateDir|cat:'form/element-raw.html' elem=$_e} {if $_e.error}<label class="error" for="{$_e.id|default:$_e.name|escape}">{$_e.error}</label>{/if}
+        </td>
+    </tr>
+{/if}
+
+{if $_e.type == 'checkbox' || $_e.type == 'radio'}
+    <tr>
+        <td width='30'>&nbsp;</td>
+        {if $_e.label != ''}
+            <td width='170'>{$_e.label} {if $_e.required}<font color="red">*</font>{/if}</td>
+	        <td width='100%'>
+	            {include file=$oaTemplateDir|cat:'form/element-raw.html' elem=$_e}
+                {if $_e.error}<br><label class="error" for="{$_e.id|default:$_e.name|escape}">{$_e.error}</label>{/if}
+	        </td>
+        {else}
+            <td colspan="2">
+                {include file=$oaTemplateDir|cat:'form/element-raw.html' elem=$_e}
+                {if $_e.error}<br><label class="error" for="{$_e.id|default:$_e.name|escape}">{$_e.error}</label>{/if}
+            </td>
+        {/if}
+    </tr>
+{/if}
+
+{if $_e.type == 'submit'}
+    {if $_e.parent_tag == 'controls'}
+       {include file=$oaTemplateDir|cat:'form/element-raw.html' elem=$_e}
+    {else}
+    <tr>
+        <td width='30'>&nbsp;</td>
+        <td colspan='2'>
+            {include file=$oaTemplateDir|cat:'form/element-raw.html' elem=$_e}
+        </td>
+    </tr>
+    {/if}
+    
+{/if}
+
+
+{if $_e.type == 'static'}
+    <tr>
+        <td width='30'>&nbsp;</td>
+        {if $_e.label != ''}
+            <td width='170'>{$_e.label}</td>
+            <td width='100%' class="static">
+                {$_e.html}
+            </td>
+        {else}
+            <td colspan="2">
+                {$_e.html}
+            </td>
+        {/if}        
+    </tr>
+{/if}
+
+{if $_e.type == 'html'}
+    <tr>
+      <td colspan="3">
+          {$_e.html}
+      </td>
+    </tr>
+{/if}
+
+
+{if $_e.type == 'custom'}
+    {include file=$oaTemplateDir|cat:'form/custom-'|cat:$_e.templateId|cat:'.html' elem=$_e}
+{/if}
+
+{if $_e.type == 'plugin-custom'}
+    {include file=$pluginBaseDir|cat:$_e.plugin|cat:$pluginTemplateDir|cat:$_e.templateId|cat:'.html'}
+{/if}
+
+{if $_e.type == 'script'}
+    {include file=$oaTemplateDir|cat:'form/script-'|cat:$_e.name|cat:'.html'}
+{/if}
+
+{if $_e.type == 'plugin-script'}
+    {include file=$pluginBaseDir|cat:$_e.plugin|cat:$pluginTemplateDir|cat:$_e.name|cat:'.html' plugin=$_e.plugin pluginWebPath=$adminPluginWebPath|cat:'/'|cat:$_e.plugin}
+{/if}
+

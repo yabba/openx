@@ -1,0 +1,202 @@
+{*<!--
+
++---------------------------------------------------------------------------+
+| OpenX v${RELEASE_MAJOR_MINOR}                                             |
+| ======${RELEASE_MAJOR_MINOR_DOUBLE_UNDERLINE}                             |
+|                                                                           |
+| Copyright (c) 2003-2009 OpenX Limited                                     |
+| For contact details, see: http://www.openx.org/                           |
+|                                                                           |
+| This program is free software; you can redistribute it and/or modify      |
+| it under the terms of the GNU General Public License as published by      |
+| the Free Software Foundation; either version 2 of the License, or         |
+| (at your option) any later version.                                       |
+|                                                                           |
+| This program is distributed in the hope that it will be useful,           |
+| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             |
+| GNU General Public License for more details.                              |
+|                                                                           |
+| You should have received a copy of the GNU General Public License         |
+| along with this program; if not, write to the Free Software               |
+| Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA |
++---------------------------------------------------------------------------+
+$Id$
+-->*}
+{*debug*}
+
+{include file=form/general-errors.html errors=$campaignErrors title=ErrorEditingCampaign text=UnableToChangeCampaign}
+
+{*campaign status change form*}
+{if $statusForm}
+    {include file=form/form.html form=$statusForm}
+{/if}
+{*/campaign status change form*}
+
+{*campaign form*}
+{include file=form/form.html form=$campaignForm}
+{*/campaign form*}
+
+
+<script language='javascript' type='text/javascript' src='{$assetPath}/js/datecheck.js'></script>
+<script language='javascript' type='text/javascript' src='numberFormat.js.php?lang={$language}'></script>
+
+<script type="text/javascript">
+<!--
+    var CAMPAIGN_TYPE_CONTRACT_NORMAL = {$CAMPAIGN_TYPE_CONTRACT_NORMAL};
+    var CAMPAIGN_TYPE_CONTRACT_EXCLUSIVE = {$CAMPAIGN_TYPE_CONTRACT_EXCLUSIVE};
+    var CAMPAIGN_TYPE_REMNANT = {$CAMPAIGN_TYPE_REMNANT};
+    var CAMPAIGN_TYPE_ECPM = {$CAMPAIGN_TYPE_ECPM};
+    var CAMPAIGN_TYPE_CONTRACT_ECPM = {$CAMPAIGN_TYPE_CONTRACT_ECPM};
+    var PRIORITY_ECPM_FROM = {$PRIORITY_ECPM_FROM};
+    var PRIORITY_ECPM_TO = {$PRIORITY_ECPM_TO};
+    var MODEL_CPM = {$MODEL_CPM};
+    var MODEL_CPC = {$MODEL_CPC};
+    var MODEL_CPA = {$MODEL_CPA};
+
+    {if $MODEL_MT != ''}
+        var MODEL_MT = {$MODEL_MT};
+    {/if}
+
+    var calendarBeginOfWeek = {$calendarBeginOfWeek};
+
+    var impressions_delivered = {$impressionsDelivered};
+    var clicks_delivered = {$clicksDelivered};
+    var conversions_delivered = {$conversionsDelivered};
+
+    var strCampaignWarningNoTargetMessage = '{$strCampaignWarningNoTargetMessage}';
+    var strCampaignWarningRemnantNoWeight ='{$strCampaignWarningRemnantNoWeight}';
+    var strCampaignWarningEcpmNoRevenue ='{$strCampaignWarningEcpmNoRevenue}';
+    var strCampaignWarningExclusiveNoWeight ='{$strCampaignWarningExclusiveNoWeight}';
+
+    $(document).ready(function() {ldelim}
+        initCampaignForm('{$campaignFormId}');
+    {rdelim});
+
+{if $adDirectEnabled}
+{literal}
+
+    var centralImpressionsRemaining = 3000; // REAL DATA GOES HERE
+    var centralClicksRemaining = 600; //REAL DATA GOES HERE
+
+    $(document).ready(function() {
+        initCampaignStatus();
+    });
+
+    function insufficientNumberCheck(remainingLocalCount, remainingCentralCount, remainingCentralId)
+    {
+        var $remainingCentral = $("#" + remainingCentralId);
+        if ($remainingCentral.lenght == 0) {
+          return;
+        }
+        markInsufficient(remainingLocalCount < remainingCentralCount, remainingCentralId);
+    }
+
+    function markInsufficient(insufficient, remainingCentralId)
+    {
+        var $remainingCentral = $("#" + remainingCentralId);
+        var $remainingCentralHelpLink = $("#" + remainingCentralId + "HelpLink");
+
+        if (insufficient) {
+            $remainingCentral.addClass("sts-insufficient");
+            $remainingCentralHelpLink.show().css("display", "inline");
+        }
+        else {
+            $remainingCentral.removeClass("sts-insufficient");
+            $remainingCentralHelpLink.hide();
+        }
+    }
+{/literal}
+{/if}
+
+{literal}
+function updateEcpm(userTriggered)
+{
+    var impressionsSoFar = this['impressions_delivered'];
+    var clicksSoFar = this['clicks_delivered'];
+    var conversionsSoFar = this['conversions_delivered'];
+    var revenueType = $("#pricing_revenue_type").val();
+    var revenue = $("#revenue").val() ? $("#revenue").val() : 0.0;
+    var clientId = $(":input[name=clientid]").val();
+    var campaignId = $(":input[name=campaignid]").val();
+    var startDate = $("#start").val();
+    var endDate = $("#end").val();
+
+    // AJAX call.
+    $.ajax({
+        url: 'campaign-edit.php?ajax=true&clientid=' + clientId +
+            '&campaignid=' + campaignId + '&revenue_type=' + revenueType +
+            '&revenue=' + revenue + '&impressions=' + impressionsSoFar +
+            '&clicks=' + clicksSoFar + '&conversions=' + conversionsSoFar +
+            '&start=' + startDate + '&end=' + endDate,
+        success: function(response) {
+            $("#ecpm_val").html(response);
+            $("#ecpm_val").trigger('ecpmUpdate', { userTriggered: userTriggered});
+        },
+        error: function(xhr) {
+            //alert('Error! Status = ' + xhr.status);
+        }
+    });
+}
+
+function updateCampaignPricingSectionNotes(field, unlimitedField)
+{
+    var name = field.name;
+    var isUnlimited = unlimitedField != undefined && unlimitedField.checked;
+
+    // Update remaining impressions/click/conversions note
+    var $remainingNoteSpan = $('#' +  name + '_remaining_span');
+    var deliveredName = field.name + '_delivered';
+    var delivered = this[deliveredName];
+    var booked = field.value;
+    if (booked == '-') {
+        booked = 0;
+    }
+    if (!isUnlimited && max_formattedNumberStringToFloat(booked) >= 0) {
+        var remaining = max_formattedNumberStringToFloat(booked) - delivered;
+        $('#' +  name + '_remaining_count').html(max_formatNumberIgnoreDecimals(remaining));
+{/literal}
+{if $adDirectEnabled}
+        insufficientNumberCheck(remaining, centralImpressionsRemaining, 'openadsRemainingImpressions');
+        insufficientNumberCheck(remaining, centralClicksRemaining, 'openadsRemainingClicks');
+{/if}
+{literal}
+        $remainingNoteSpan.show();
+    }
+    else {
+        $remainingNoteSpan.hide();
+    }
+}
+
+
+function campaignFormUnlimitedUpdate(unlimitedField, limitField, focus, remainingCentralId)
+{
+	if (unlimitedField.checked == true) {
+	    limitField.value = '-';
+	    limitField.disabled = true;
+
+{/literal}
+   {if $adDirectEnabled}
+       {literal}
+       //remove any "insufficient" error indicators
+           if (remainingCentralId != undefined && remainingCentralId != "") {
+             markInsufficient(false, remainingCentralId);
+           }
+       {/literal}
+   {/if}
+{literal}
+    }
+    else {
+        if (limitField.value == '-') {
+            limitField.value = "";
+        }
+        limitField.disabled = false;
+        if (focus == true) {
+            limitField.focus();
+        }
+    }
+}
+
+{/literal}
+//-->
+</script>

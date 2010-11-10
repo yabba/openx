@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml-stylesheet type="text/xsl" href=""?>
+
+<plugin>
+    <name>openXVideoAds</name>
+    <creationDate>2009-05-20</creationDate>
+    <author>OpenX</author>
+    <authorEmail>plugins@openx.org</authorEmail>
+    <authorUrl>http://www.openx.org</authorUrl>
+    <license>license.txt</license>
+    <description>Serve IAB VAST video ads through OpenX.</description>
+    <version>1.8.7</version>
+    <type>extension</type>
+
+    <install>
+
+        <files>
+            <file path="{PLUGINPATH}">openXVideoAds.readme.txt</file>
+            <file path="{PLUGINPATH}">openXVideoAds.uninstall.txt</file>
+        </files>
+
+        <contents>
+            <group name="vastInlineBannerTypeHtml">1</group>
+            <group name="vastOverlayBannerTypeHtml">2</group>
+            <group name="oxLogVast">3</group>
+            <group name="vastServeVideoPlayer">4</group>
+            <group name="videoReport">5</group>
+        </contents>
+
+    </install>
+
+    <readme>
+
+    </readme>
+
+</plugin>

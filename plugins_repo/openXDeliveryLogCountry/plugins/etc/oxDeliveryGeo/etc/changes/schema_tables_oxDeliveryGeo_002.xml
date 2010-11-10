@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml-stylesheet type="text/xsl" href="xsl/mdb2_schema.xsl"?>
+<database>
+
+ <name>oxDeliveryGeo</name>
+ <create>false</create>
+ <overwrite>false</overwrite>
+ <version>002</version>
+ <status>final</status>
+
+ <table>
+
+  <name>data_bkt_country_c</name>
+
+  <declaration>
+
+   <field>
+    <name>interval_start</name>
+    <type>openads_datetime</type>
+    <notnull>true</notnull>
+    <default></default>
+   </field>
+
+   <field>
+    <name>creative_id</name>
+    <type>openads_mediumint</type>
+    <length>20</length>
+    <notnull>true</notnull>
+    <default></default>
+   </field>
+
+   <field>
+    <name>zone_id</name>
+    <type>openads_mediumint</type>
+    <length>20</length>
+    <notnull>true</notnull>
+    <default></default>
+   </field>
+
+   <field>
+    <name>country</name>
+    <type>openads_char</type>
+    <length>3</length>
+    <notnull>true</notnull>
+    <default></default>
+   </field>
+
+   <field>
+    <name>count</name>
+    <type>openads_int</type>
+    <length>11</length>
+    <notnull>true</notnull>
+    <default>0</default>
+   </field>
+
+   <index>
+    <name>data_bkt_country_c_pkey</name>
+    <primary>true</primary>
+    <field>
+     <name>interval_start</name>
+     <sorting>ascending</sorting>
+    </field>
+    <field>
+     <name>creative_id</name>
+     <sorting>ascending</sorting>
+    </field>
+    <field>
+     <name>zone_id</name>
+     <sorting>ascending</sorting>
+    </field>
+    <field>
+     <name>country</name>
+     <sorting>ascending</sorting>
+    </field>
+   </index>
+
+  </declaration>
+
+ </table>
+
+ <table>
+
+  <name>data_bkt_country_m</name>
+
+  <declaration>
+
+   <field>
+    <name>interval_start</name>
+    <type>openads_datetime</type>
+    <notnull>true</notnull>
+    <default></default>
+   </field>
+
+   <field>
+    <name>creative_id</name>
+    <type>openads_mediumint</type>
+    <length>20</length>
+    <notnull>true</notnull>
+    <default></default>
+   </field>
+
+   <field>
+    <name>zone_id</name>
+    <type>openads_mediumint</type>
+    <length>20</length>
+    <notnull>true</notnull>
+    <default></default>
+   </field>
+
+   <field>
+    <name>country</name>
+    <type>openads_char</type>
+    <length>3</length>
+    <notnull>true</notnull>
+    <default></default>
+   </field>
+
+   <field>
+    <name>count</name>
+    <type>openads_int</type>
+    <length>11</length>
+    <notnull>true</notnull>
+    <default>0</default>
+   </field>
+
+   <index>
+    <name>data_bkt_country_m_pkey</name>
+    <primary>true</primary>
+    <field>
+     <name>interval_start</name>
+     <sorting>ascending</sorting>
+    </field>
+    <field>
+     <name>creative_id</name>
+     <sorting>ascending</sorting>
+    </field>
+    <field>
+     <name>zone_id</name>
+     <sorting>ascending</sorting>
+    </field>
+    <field>
+     <name>country</name>
+     <sorting>ascending</sorting>
+    </field>
+   </index>
+
+  </declaration>
+
+ </table>
+
+ <table>
+
+  <name>stats_country</name>
+
+  <declaration>
+
+   <field>
+    <name>stats_country_id</name>
+    <type>openads_bigint</type>
+    <length>20</length>
+    <notnull>true</notnull>
+    <default>0</default>
+    <autoincrement>1</autoincrement>
+   </field>
+
+   <field>
+    <name>date_time</name>
+    <type>openads_datetime</type>
+    <notnull>true</notnull>
+    <default></default>
+   </field>
+
+   <field>
+    <name>creative_id</name>
+    <type>openads_int</type>
+    <unsigned>true</unsigned>
+    <length>10</length>
+    <notnull>true</notnull>
+    <default></default>
+   </field>
+
+   <field>
+    <name>zone_id</name>
+    <type>openads_int</type>
+    <unsigned>true</unsigned>
+    <length>10</length>
+    <notnull>true</notnull>
+    <default></default>
+   </field>
+
+   <field>
+    <name>impressions</name>
+    <type>openads_int</type>
+    <unsigned>true</unsigned>
+    <length>10</length>
+    <notnull>true</notnull>
+    <default>0</default>
+   </field>
+
+   <field>
+    <name>clicks</name>
+    <type>openads_int</type>
+    <unsigned>true</unsigned>
+    <length>10</length>
+    <notnull>true</notnull>
+    <default>0</default>
+   </field>
+
+   <field>
+    <name>country</name>
+    <type>openads_char</type>
+    <length>3</length>
+    <notnull>true</notnull>
+    <default></default>
+   </field>
+
+   <index>
+    <name>stats_country_id_pkey</name>
+    <primary>true</primary>
+    <field>
+     <name>stats_country_id</name>
+     <sorting>ascending</sorting>
+    </field>
+   </index>
+
+   <index>
+    <name>stats_country_dt</name>
+    <field>
+     <name>date_time</name>
+     <sorting>ascending</sorting>
+    </field>
+   </index>
+
+   <index>
+    <name>stats_country_cid_dt</name>
+    <field>
+     <name>creative_id</name>
+     <sorting>ascending</sorting>
+    </field>
+    <field>
+     <name>date_time</name>
+     <sorting>ascending</sorting>
+    </field>
+   </index>
+
+   <index>
+    <name>stats_country_zid_dt</name>
+    <field>
+     <name>zone_id</name>
+     <sorting>ascending</sorting>
+    </field>
+    <field>
+     <name>date_time</name>
+     <sorting>ascending</sorting>
+    </field>
+   </index>
+
+  </declaration>
+
+ </table>
+
+</database>

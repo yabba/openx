@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml-stylesheet type="text/xsl" href=""?>
+
+<plugin>
+    <name>oxLogVast</name>
+    <creationDate>2009-03-10</creationDate>
+    <author>OpenX</author>
+    <authorEmail>plugins@openx.org</authorEmail>
+    <authorUrl>http://www.openx.org</authorUrl>
+    <license>GPL</license>
+    <description>Delivery Log Vast Plugin</description>
+    <version>1.8.6</version>
+    <oxversion>2.7.30-beta-rc11</oxversion>
+    <extends>deliveryLog</extends>
+
+    <install>
+        <syscheck>
+        </syscheck>
+
+        <files>
+	        <file path="{MODULEPATH}deliveryLog/oxLogVast/">logImpressionVast.class.php</file>
+            <file path="{MODULEPATH}deliveryLog/oxLogVast/">logImpressionVast.delivery.php</file>
+        </files>
+
+        <components>
+           <component>
+                <name>logImpressionVast</name>
+                <hook>logImpressionVast</hook>
+           </component>
+        </components>
+
+    </install>
+
+
+</plugin>

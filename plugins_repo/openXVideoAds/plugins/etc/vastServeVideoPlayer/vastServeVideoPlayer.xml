@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml-stylesheet type="text/xsl" href=""?>
+<plugin>
+    <name>vastServeVideoPlayer</name>
+    <creationDate>2009-05-05</creationDate>
+    <author>OpenX</author>
+    <authorEmail>plugins@openx.org</authorEmail>
+    <authorUrl>http://www.openx.org</authorUrl>
+    <license>GPL</license>
+    <description>Delivery Log Vast Plugin</description>
+    <version>1.8.5</version>
+    <oxversion>2.7.30-beta-rc11</oxversion>
+
+    <install>
+        <syscheck>
+        </syscheck>
+
+        <files>
+            <file path="{MODULEPATH}deliveryLog/vastServeVideoPlayer/">player.delivery.php</file>
+
+	    <!-- player files below - these files should be moved to a cdn or different location when cache headers can be configured -->
+            <file path="{MODULEPATH}deliveryLog/vastServeVideoPlayer/flowplayer/3.1.1/">LICENSE.txt</file>
+            <file path="{MODULEPATH}deliveryLog/vastServeVideoPlayer/flowplayer/3.1.1/">README.txt</file>
+            <file path="{MODULEPATH}deliveryLog/vastServeVideoPlayer/flowplayer/3.1.1/">flowplayer-3.1.1.min.js</file>
+            <file path="{MODULEPATH}deliveryLog/vastServeVideoPlayer/flowplayer/3.1.1/">flowplayer.controls-3.1.1.swf</file>
+            <file path="{MODULEPATH}deliveryLog/vastServeVideoPlayer/flowplayer/3.1.1/">flowplayer-3.1.1.swf</file>
+            <file path="{MODULEPATH}deliveryLog/vastServeVideoPlayer/flowplayer/3.1.1/">flowplayer.rtmp-3.1.0.swf</file>
+        </files>
+
+        <configuration>
+            <!-- only administrator has permissions to change settings in config file -->
+            <!-- settings are written to a group section [vastServeVideoPlayer] -->
+            <setting key="isAutoPlayOfVideoInOpenXAdminToolEnabled" type="checkbox" label="Autoplay the video content (only used when viewing video in openX admin tool)" required="0" size="1" visible="1">0</setting>
+        </configuration>
+
+        <components>
+        </components>
+
+    </install>
+
+
+</plugin>

@@ -1,0 +1,235 @@
+{*<!--
+
++---------------------------------------------------------------------------+
+| OpenX v${RELEASE_MAJOR_MINOR}                                                                |
+| ======${RELEASE_MAJOR_MINOR_DOUBLE_UNDERLINE}                                                                 |
+|                                                                           |
+| Copyright (c) 2003-2009 OpenX Limited                                     |
+| For contact details, see: http://www.openx.org/                           |
+|                                                                           |
+| This program is free software; you can redistribute it and/or modify      |
+| it under the terms of the GNU General Public License as published by      |
+| the Free Software Foundation; either version 2 of the License, or         |
+| (at your option) any later version.                                       |
+|                                                                           |
+| This program is distributed in the hope that it will be useful,           |
+| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             |
+| GNU General Public License for more details.                              |
+|                                                                           |
+| You should have received a copy of the GNU General Public License         |
+| along with this program; if not, write to the Free Software               |
+| Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA |
++---------------------------------------------------------------------------+
+$Id:captcha-dialog.html 11612 2007-10-26 11:00:05Z matteo.beccati@openads.org $
+
+-->*}
+{if $uiPart == 'header'}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html{if $phpAds_TextDirection != 'ltr'} dir="{$phpAds_TextDirection}"{/if}><head>
+<title>{$pageTitle}</title>
+<meta name="generator" content="{$metaGenerator}">
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="X-UA-Compatible" content="IE=7">
+
+{include file=layout/styles.html}
+{include file=layout/scripts.html}
+
+{if $customBranding}
+{literal}
+
+<style type="text/css">
+{/literal}
+{if $headerForegroundColor}
+{literal}
+.brandingName {
+{/literal}
+    color: {$headerForegroundColor};
+{literal}
+}
+{/literal}
+{/if}
+
+{if $headerBackgroundColor}
+{literal}
+#oaHeader {
+{/literal}
+    background-color: {$headerBackgroundColor};
+{literal}
+}
+{/literal}
+{/if}
+
+{if $headerTextColor}
+{literal}
+#oaNavigationExtra, #oaNavigationExtraTop {
+{/literal}
+    color: {$headerTextColor}
+{literal}
+}
+{/literal}
+{/if}
+{literal}
+</style>
+{/literal}
+{/if}
+
+{$jsMPE}
+{$jsFlash}
+
+{foreach item=s from=$aSide}
+{if $s.top}
+<link rel="top" href="{$s.filename|escape}" title="{$s.title|escape}" />
+{/if}
+{if $s.up}
+<link rel="up" href="{$s.filename|escape}" title="{$s.title|escape}" />
+{/if}
+{/foreach}
+{foreach item=s from=$aSideShortcuts}
+<link rel="bookmark" href="{$s.link|escape}" title="{$s.name}" />
+{/foreach}
+
+</head>
+<body class="hasInterface {if $showContentFrame || $showSidebar }hasGradient{/if} {if $showSidebar}hasSidebar{/if} {if $installing}installer{/if}" onload="initPage();">
+
+
+{* Using insert to prevent caching *}
+{insert name=OA_Admin_UI_CustomHeader}
+
+<div id="oaHeader">
+
+{include file=layout/branding.html}
+  <div id="oaNavigationExtraTop"{if $displaySearch} class="hasSearch"{/if}>
+    <ul>
+
+{if $infoUser}
+        <li class="infoUser">{$infoUser|escape}</li>
+{/if}
+
+{if empty($aSectionNav) && $helpLink}
+        <li class="buttonHelp"><a href="{$helpLink|escape}" target="help">{t str=Help}</a></li>
+{/if}
+
+{if $buttonReportBugs}
+        <li class="buttonReportBugs"><a href="http://www.openx.org/support/reporting-bugs" target="_blank">{t str='Report bug'}</a></li>
+{/if}
+
+{if $showContactUsLink}
+        <li class="buttonContactUs{if !$buttonLogout && !$buttonStartOver} last{/if}"><a href="http://www.openx.org/about/contact-us" target="_blank">{t str='Contact us'}</a></li>
+{/if}
+
+{if $buttonLogout}
+        <li class="buttonLogout"><a href="{$adminWebPath}logout.php">{t str=Logout}</a></li>
+{/if}
+
+{if $buttonStartOver}
+        <li class="buttonStartOver"><a href="index.php">{t str=StartOver}</a></li>
+{/if}
+    </ul>
+    </div>
+
+
+{if $displaySearch}
+    <div id="oaSearch">
+        <form name="search" action="{$adminWebPath}admin-search.php" target="SearchWindow" onsubmit="search_window(document.search.keyword.value,'{$searchUrl|escape:js}'); return false;">
+            <input type="text" name="keyword" class="search" accesskey="{t key=Search}"><input class="submit" type="submit" value="&nbsp" >
+        </form>
+    </div>
+{/if}
+</div>
+
+<div id="oaNavigation">
+{if $showMainNavigation}
+{include file=layout/navigation.html}
+{/if}
+
+
+{if $buttonLogout}
+    <ul id="oaNavigationExtra">
+        <li class="accountSwitcher">
+            <div class="triggerContainer"><div class="switchTrigger">{$accountName|escape}</div> <a href="#" accesskey="{$keyWorkingAs}">{$strWorkingAs}</a> </div>
+            <div class="accountsPanel">
+              <div class="switchTop">&nbsp;</div>
+              <div class="switchMiddle">
+                <div class="switchMiddleBody">
+	                <div class="label">
+                      {t key=SwitchTo}
+                      {if $showSearchAndRecent}<input id="accountSearch" type="text" />
+                        <span id="accountSearchIcon">&nbsp;</span>
+                      {/if}
+                    </div>
+                    <div id="accountLoading"></div>
+	                <div class="result">
+                      {include file=account-switch-search.html}
+	                </div>
+                </div>
+              </div>
+              <div class="switchDown">&nbsp;</div>
+            </div>
+        </li>
+    </ul>
+{/if}
+{if $buttonLogout}
+    <script type='text/javascript'>
+    {literal}
+      <!--
+      $(document).ready(function() {
+    {/literal}
+        initAccoutSwitcher("{$accountSearchUrl}");
+    {literal}
+      });
+      -->
+    {/literal}  
+    </script>        
+    <div class='accountSwitcherOverlay'>&nbsp;</div>
+{/if}    
+</div>
+
+<div id="firstLevelContent">
+{if $showSidebar}
+    {include file=layout/sidebar.html}
+{/if}
+
+
+<div id="secondLevelContent">
+  {include file=layout/content-header.html}    
+    
+
+ 
+{* Footer *}
+{else}
+
+
+{* Using insert to prevent caching *}
+{insert name=OA_Admin_UI_CustomFooter}
+
+  {include file=layout/content-footer.html}    
+    </div>
+</div>
+
+{if $jsMPE}
+  <div id="runMpe" name="runMpe">&#160;</div>
+  <script type="text/javascript">
+  <!--
+      xajax_OA_runMPE();
+  //-->
+  </script>
+{/if}
+
+{if $productUpdatesCheck}
+<script type="text/javascript" src="maintenance-updates-js.php"></script>
+{/if}
+
+{if $maintenanceAlert}
+<script type='text/javascript'>
+<!--
+    alert('{t str=MaintenanceNotActive}');
+    location.replace('{$adminWebPath}maintenance-maintenance.php');
+//-->
+</script>
+{/if}
+
+{include file=layout/messages.html}
+</body>
+</html>
+{/if}
